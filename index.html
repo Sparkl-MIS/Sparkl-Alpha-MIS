@@ -1,127 +1,411 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sparkl Alpha - Data Analysis</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
-    <style>
-        /* Custom styles for the background image and font */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0A0A0A; /* Dark background for a premium feel */
-        }
-        .background-container {
-            /* Updated background image URL */
-            background-image: url('https://datarundown.com/wp-content/uploads/2023/08/Data-Analytics-professional-analysing-dashboard.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: relative; /* Needed for overlay */
-            overflow: hidden; /* Hide overflow from subtle background elements */
-        }
-        /* Semi-transparent overlay for readability - Opacity adjusted to 80% */
-        .background-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.8)); /* Opacity set to 80% */
-            z-index: 1;
-        }
-        /* Custom glow effect for the button */
-        .glow-button {
-            box-shadow: 0 0 20px rgba(79, 70, 229, 0.8), 0 0 40px rgba(79, 70, 229, 0.6); /* More pronounced blue glow */
-            transition: all 0.3s ease-in-out;
-        }
-        .glow-button:hover {
-            box-shadow: 0 0 30px rgba(79, 70, 229, 1), 0 0 60px rgba(79, 70, 229, 0.8);
-            transform: scale(1.03);
-        }
+  <base target="_top">
+  <title>Sparkl MIS</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="code.js">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: 'Segoe UI', sans-serif; }
+    .hidden { display: none !important; }
 
-        /* Frosted glass effect for header - Now transparent */
-        .frosted-glass {
-            background-color: transparent; /* Removed background color */
-            backdrop-filter: none; /* Removed blur effect */
-            -webkit-backdrop-filter: none; /* Removed Safari support for blur */
-            border: none; /* Removed border */
-        }
+    .login-page {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100vh; background: #f5f7fa;
+    }
+    .login-box {
+      background: white; padding: 2rem; border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .login-box input {
+      display: block; width: 100%; margin: 1rem 0; padding: 0.5rem;
+    }
+    .login-box button {
+      padding: 0.5rem 1rem; cursor: pointer;
+    }
 
-        /* Feature card hover effect (kept for potential future use, though cards are removed) */
-        .feature-card {
-            transition: all 0.3s ease-in-out;
-            border: 1px solid transparent; /* Default transparent border */
-        }
-        .feature-card:hover {
-            transform: translateY(-5px); /* Slight lift */
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); /* Stronger shadow */
-            border-color: rgba(79, 70, 229, 0.5); /* Blue border on hover */
-        }
+    .app-container { display: flex; height: 100vh; }
+    .sidebar {
+      width: 240px; background: #ffffff; border-right: 1px solid #eee;
+      padding: 1rem; overflow-y: auto;
+    }
+    .sidebar h2 { font-size: 1.3rem; margin-bottom: 2rem; color: #5b5b5b; }
+    .sidebar .section-label {
+      margin-top: 1rem; font-size: 0.75rem; color: #006A4E; margin-bottom: 0.5rem;
+    }
+    .sidebar .menu-item {
+      display: flex; align-items: center; padding: 0.5rem 0;
+      font-size: 0.95rem; cursor: pointer; color: #444;
+    }
+    .sidebar .menu-item i {
+      font-size: 24px !important; margin-right: 0.75rem; color: #777;
+    }
 
-        /* Custom animation for headline */
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.95) translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-        .animate-headline {
-            animation: fadeInScale 1s ease-out forwards;
-        }
+    .main {
+      flex-grow: 1; padding: 1rem 2rem; background: #f5f7fa;
+      overflow-y: auto; position: relative;
+    }
+    .topbar {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;
+    }
+    .user-box {
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .user-name {
+      font-size: 0.9rem; color: #333;
+    }
+    .profile {
+      background: #444; color: white; width: 35px; height: 35px; border-radius: 50%;
+      display: flex; justify-content: center; align-items: center; font-size: 0.9rem;
+    }
+    .logout-btn {
+      padding: 0.4rem 0.7rem; background: #eee; border: 1px solid #ccc;
+      border-radius: 6px; cursor: pointer;
+    }
 
-        /* Subtle background pattern/gradient for content area - Removed explicit background for main-content-bg */
-        .main-content-bg {
-            /* background removed to show more of the background image through the overlay */
-        }
-    </style>
+    .cards {
+      display: flex; flex-wrap: wrap; gap: 1rem;
+    }
+    .card {
+      width: 300px; padding: 1rem; border-radius: 12px; background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); display: flex; align-items: center;
+      gap: 1rem; cursor: pointer; transition: 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .card-icon {
+      background: #f2f0ff; color: #6c63ff; border-radius: 10px; padding: 0.75rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-content {
+      font-size: 1rem; font-weight: 500; color: #333;
+    }
+
+    iframe {
+      width: 100%; height: 80vh; border: none;
+    }
+    #back-btn {
+      margin: 1rem 0;
+    }
+    #back-btn button {
+      padding: 0.5rem 1rem; background: #eee; border: 1px solid #0000; border-radius: 6px; font-weight: 500; cursor: pointer;
+    }
+
+    #admin-panel input {
+      padding: 0.5rem; margin: 0.5rem 0.5rem 0.5rem 0;
+      border: 1px solid #ccc; width: 180px;
+    }
+    #admin-panel button {
+      padding: 0.5rem 1rem; background: #6c63ff; color: white;
+      border: none; cursor: pointer; border-radius: 4px;
+    }
+    #admin-menu-list {
+      margin-top: 1rem; line-height: 2;
+    }
+    .delete-btn {
+      background: #ffefef; color: red; border: none;
+      padding: 0.2rem 0.5rem; border-radius: 6px; cursor: pointer; margin-left: 10px;
+    }
+
+    .menu-item {
+  transition: background 0.2s;
+}
+.menu-item:hover {
+  background-color: #b4e7d0 !important; color: #000000;
+}
+
+  </style>
 </head>
-<body class="bg-gray-900 text-white">
-    <div class="background-container">
-        <div class="background-overlay"></div>
+<body>
 
-        <header class="relative z-10 w-full py-4 px-6 md:px-12 flex items-center justify-start frosted-glass shadow-xl rounded-b-xl">
-            <div class="flex items-center">
-                <img src="https://www.sparkl.me/assets/img/alpha/alphaSparkl.svg" alt="Sparkl Alpha Logo" class="h-12 w-auto mr-4 rounded-lg">
-                <div class="flex flex-col items-start">
-                    <span class="text-4xl font-extrabold text-white tracking-tight font-montserrat leading-none">Sparkl</span>
-                    <span class="text-lg font-semibold text-gray-300 -mt-1">Alpha-MIS</span>
-                </div>
-            </div>
-            </header>
+<!-- LOGIN -->
+<div id="login-section" class="login-page">
+  <div class="login-box">
+    <h2>🔐 Sparkl-MIS Login</h2>
+    <input id="userid" placeholder="User ID" />
+    <input id="password" type="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
+    <p id="login-msg" style="color:red;margin-top:1rem;"></p>
+  </div>
+</div>
 
-        <main class="relative z-10 flex-grow flex flex-col items-center justify-center text-center p-6 md:p-12">
-            <div class="max-w-5xl mx-auto">
-                <h2 class="text-yellow-400 text-6xl md:text-7xl font-bold mb-3 tracking-wide uppercase animate-headline">
-                    Welcome
-                </h2>
 
-                <h1 class="text-2xl md:text-3xl font-extrabold leading-tight mb-8 text-white drop-shadow-lg font-montserrat animate-headline">
-                    Sparkl-Alpha MIS Platform
-                </h1>
+<!-- APP -->
+<div id="app" class="hidden app-container">
+  <div class="sidebar">
+    <h2>⭐ SPARKL MIS</h2>
+    <div id="sidebar-sections"></div>
+  </div>
 
-                <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-6 mt-12">
-                    <a href="https://script.google.com/a/macros/sparkl.me/s/AKfycbxAC1v7r504tOm8ktoPDxU5Y0dTMgQS034dlRIyUGQt/dev" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75 text-lg">
-                        Our Dashboard
-                    </a>
-                    <a href="https://script.google.com/a/macros/sparkl.me/s/AKfycby5L7YxAnVcKv79jz2bv8jPYR_ck870QdpGJx92JP1WEqOKdAAFw0miETvuLPFwMUJ_/exec" Class="bg-transparent border-2 border-indigo-600 text-indigo-300 hover:bg-indigo-600 hover:text-white font-semibold py-3 px-8 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75 text-lg">
-                        Syllabus Compliance
-                    </a>
-                </div>
-            </div>
-        </main>
+  <div class="main">
+    <div class="topbar">
+      <div id="role-title" class="user-name"></div>
+      <div class="user-box">
+        <div class="profile"><span id="profile-initial">U</span></div>
+        <div class="header-controls">
+  <button class="logout-btn" onclick="logout()">Logout</button>
+  
+</div>
 
-        <footer class="relative z-10 w-full py-4 px-6 md:px-12 bg-gray-900/80 text-center text-gray-500 text-sm">
-            &copy; 2025 Sparkl Alpha. All rights reserved.
-        </footer>
+      </div>
     </div>
+
+    <div id="back-btn" class="hidden" style="display: flex; gap: 10px; margin: 1rem 0;">
+  <button onclick="goBack()">🔙 Back</button>
+  <button onclick="openFullScreen()">🗖 Full Screen</button>
+</div>
+
+
+    <div id="admin-panel" class="hidden">
+      <h3>Add Menu</h3>
+      <input id="role" placeholder="Role (Public/Admin)" />
+      <input id="menu" placeholder="Menu Group" />
+      <input id="submenu" placeholder="Menu Item" />
+      <input id="link" placeholder="URL" />
+      <input id="icon" placeholder="Material Icon" />
+      <button onclick="addEntry()">Add</button>
+      <h3 style="margin-top:1rem;">All Menu Items</h3>
+      <ul id="admin-menu-list"></ul>
+    </div>
+
+    <div id="main-content" class="cards"></div>
+    <iframe id="iframe-view" class="hidden"></iframe>
+  </div>
+
+  
+</div>
+
+<script>
+let user = {}, currentLink = "", currentMenu = "";
+
+window.onload = () => {
+  const saved = sessionStorage.getItem("user");
+  if (saved) {
+    user = JSON.parse(saved);
+    loadPortal(user.roles);
+  }
+};
+
+function login() {
+  const id = document.getElementById("userid").value;
+  const pass = document.getElementById("password").value;
+  google.script.run.withSuccessHandler(res => {
+    if (res.success) {
+      user = { id: res.user, roles: res.roles };
+      sessionStorage.setItem("user", JSON.stringify(user));
+      loadPortal(user.roles);
+    } else {
+      document.getElementById("login-msg").innerText = "❌ Invalid credentials";
+    }
+  }).checkLogin(id, pass);
+}
+
+function logout() {
+  sessionStorage.clear();
+  location.reload();
+}
+
+function openItem(link, menu, submenu) {
+  const iframe = document.getElementById("iframe-view");
+  const content = document.getElementById("main-content");
+  const backBtn = document.getElementById("back-btn");
+
+  currentMenu = menu;
+
+  if (link.includes("lookerstudio.google.com")) {
+    window.open(link, '_blank');
+    return;
+  }
+
+  // Add minimal UI mode for Google Docs/Sheets/Slides
+  currentLink = link.includes("docs.google.com") && !link.includes("rm=minimal")
+  ? link + (link.includes("?") ? "&rm=minimal" : "?rm=minimal")
+  : link;
+
+
+  iframe.src = currentLink;
+  iframe.classList.remove("hidden");
+  content.classList.add("hidden");
+  backBtn.classList.remove("hidden");
+}
+
+
+function goBack() {
+  const iframe = document.getElementById("iframe-view");
+  const content = document.getElementById("main-content");
+  const backBtn = document.getElementById("back-btn");
+
+  iframe.classList.add("hidden");
+  iframe.src = "";
+  content.classList.remove("hidden");
+  backBtn.classList.add("hidden");
+
+  if (currentMenu) {
+    filterCardsByGroup(currentMenu);
+  } else {
+    const cards = document.querySelectorAll(".card");
+    cards.forEach(card => {
+      card.style.display = "none";
+    });
+  }
+}
+
+function openFullScreen() {
+  if (currentLink) {
+    window.open(currentLink, '_blank');
+  } else {
+    alert("No content available to open in full screen.");
+  }
+}
+
+
+function filterCardsByGroup(menuGroup) {
+  currentMenu = menuGroup;
+  const cards = document.querySelectorAll(".card");
+  cards.forEach(card => {
+    card.style.display = card.dataset.menu === menuGroup ? "flex" : "none";
+  });
+  document.getElementById("iframe-view").classList.add("hidden");
+  document.getElementById("back-btn").classList.add("hidden");
+  document.getElementById("main-content").classList.remove("hidden");
+}
+
+function loadPortal(roles) {
+  document.getElementById("login-section").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  document.getElementById("role-title").innerText = `Welcome to Sparkl-MIS, ${user.id}`;
+  document.getElementById("profile-initial").innerText = user.id.charAt(0).toUpperCase();
+
+  if (user.roles.length > 1) {
+    const roleWrapper = document.createElement("div");
+    roleWrapper.style.marginTop = "8px";
+    user.roles.forEach(role => {
+      const checkbox = document.createElement("input");
+      checkbox.type = "radio";
+      checkbox.name = "role-select";
+      checkbox.value = role;
+      checkbox.id = `role_${role}`;
+      checkbox.onclick = () => {
+        if (role === "Admin") {
+          document.getElementById("admin-panel").classList.remove("hidden");
+          loadAdminMenu();
+        } else {
+          document.getElementById("admin-panel").classList.add("hidden");
+        }
+        loadPublicMenu(user.id, [role]);
+      };
+      if (role === user.roles[0]) checkbox.checked = true;
+
+      const label = document.createElement("label");
+      label.htmlFor = `role_${role}`;
+      label.innerText = role;
+      label.style.marginRight = "10px";
+      roleWrapper.appendChild(checkbox);
+      roleWrapper.appendChild(label);
+    });
+    document.getElementById("role-title").appendChild(roleWrapper);
+  }
+
+  const defaultRole = user.roles.includes("Admin") ? "Admin" : user.roles[0];
+  if (defaultRole === "Admin") {
+    document.getElementById("admin-panel").classList.remove("hidden");
+    loadAdminMenu();
+  } else {
+    document.getElementById("admin-panel").classList.add("hidden");
+  }
+  loadPublicMenu(user.id, [defaultRole]);
+}
+
+function loadPublicMenu(userId, userRoles) {
+  google.script.run.withSuccessHandler(data => {
+    const grouped = {};
+    const isAllAccess = userId.toLowerCase() === "all";
+
+    data.forEach(([role, menu, submenu, link, icon]) => {
+      const roleList = role.split(",").map(r => r.trim().toLowerCase());
+      const match = isAllAccess ? roleList.includes("all") : roleList.some(r => userRoles.map(u => u.toLowerCase()).includes(r));
+
+      if (match) {
+        if (!grouped[menu]) grouped[menu] = [];
+        grouped[menu].push({ submenu, link, icon, menu });
+      }
+    });
+
+    const sidebar = document.getElementById("sidebar-sections");
+    const content = document.getElementById("main-content");
+    sidebar.innerHTML = '';
+    content.innerHTML = '<p style="text-align:center; padding-top:50px;"></p>';
+
+    for (let menu in grouped) {
+      const sectionWrapper = document.createElement("div");
+      const label = document.createElement("div");
+      label.className = "section-label";
+      label.innerText = menu;
+      label.style.fontSize = "1.1rem";
+      label.style.fontWeight = "bold";
+      label.style.cursor = "pointer";
+
+      const arrow = document.createElement("span");
+      arrow.innerHTML = "▼";
+      arrow.style.marginLeft = "10px";
+      arrow.style.fontSize = "0.9rem";
+      label.appendChild(arrow);
+
+      const sectionItems = document.createElement("div");
+      sectionItems.style.marginTop = "5px";
+      sectionItems.style.display = "none";
+
+      label.onclick = () => {
+        const visible = sectionItems.style.display !== "block";
+        sectionItems.style.display = visible ? "block" : "none";
+        arrow.innerHTML = visible ? "▶" : "▼";
+
+        currentMenu = menu;
+        const cards = document.querySelectorAll(".card");
+        cards.forEach(card => {
+          card.style.display = (card.dataset.menu === menu && visible) ? "flex" : "none";
+        });
+
+        document.getElementById("iframe-view").classList.add("hidden");
+        document.getElementById("main-content").classList.remove("hidden");
+        document.getElementById("back-btn").classList.add("hidden");
+      };
+
+      grouped[menu].forEach(item => {
+        // Sidebar button
+        const btn = document.createElement("div");
+        btn.className = "menu-item";
+        btn.style.borderRadius = "6px";
+        btn.style.padding = "5px 10px";
+        btn.onmouseover = () => btn.style.backgroundColor = "#b4e7d0";
+        btn.onmouseout = () => btn.style.backgroundColor = "";
+        btn.innerHTML = `<i class="material-icons">${item.icon}</i> ${item.submenu}`;
+        btn.onclick = () => openItem(item.link, item.menu, item.submenu);
+        sectionItems.appendChild(btn);
+
+        // Card for main content
+        const card = document.createElement("div");
+        card.className = "card";
+        card.dataset.menu = item.menu;
+        card.onclick = () => openItem(item.link, item.menu, item.submenu);
+        card.style.display = "none"; // 🔍 Hide by default
+        card.innerHTML = `
+          <div class="card-icon">
+            <i class="material-icons">${item.icon}</i>
+          </div>
+          <div class="card-content">${item.submenu}</div>
+        `;
+        content.appendChild(card);
+      });
+
+      sectionWrapper.appendChild(label);
+      sectionWrapper.appendChild(sectionItems);
+      sidebar.appendChild(sectionWrapper);
+    }
+  }).getMenuData();
+}
+</script>
 </body>
 </html>

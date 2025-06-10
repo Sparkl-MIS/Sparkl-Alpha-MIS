@@ -1,163 +1,868 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <base target="_top">
-  <title>Sparkl MIS</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sparkl-Alpha 📶 MIS</title>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <script src="https://raw.githubusercontent.com/Sparkl-MIS/Sparkl-Alpha-MIS/main/code.gs"></script>
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; font-family: 'Segoe UI', sans-serif; }
-    .hidden { display: none !important; }
+    /* Define generic color variables first */
+    :root {
+      /* Light Theme Defaults */
+      --primary-color: #4CAF50;
+      --primary-dark-color: #388E3C;
+      --accent-color: #FFC107;
 
+      --text-color-primary: #2C3E50;
+      --text-color-secondary: #55606B;
+      --text-color-light: #7F8C8D;
+
+      --bg-color-body: #F7F9FC;
+      --bg-color-sidebar: #FFFFFF;
+      --bg-color-topbar: #FFFFFF;
+      --bg-color-card: #FFFFFF;
+      --bg-color-input: #F7F9FC;
+      --bg-color-button-secondary: #E0E7EB;
+      --bg-color-hover: #E8F5E9;
+      --bg-color-delete-light: #FFEBEE;
+
+      --border-color-main: #DDE2E6;
+      --border-color-delete: #FFCDD2;
+
+      --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
+      --shadow-medium: 0 4px 10px rgba(0, 0, 0, 0.12);
+
+      /* Sizing Variables */
+      --spacing-unit: 0.8rem;
+      --font-size-base: 0.9rem;
+      --font-size-lg: 1.2rem;
+      --font-size-xl: 1.5rem;
+      --icon-size-base: 18px;
+      --icon-size-lg: 24px;
+    }
+
+    /* Dark Theme Overrides */
+    html[data-theme='dark'] {
+      --primary-color: #66BB6A;
+      --primary-dark-color: #4CAF50;
+      --accent-color: #FFD54F;
+
+      --text-color-primary: #ECF0F1;
+      --text-color-secondary: #BDC3C7;
+      --text-color-light: #95A5A6;
+
+      --bg-color-body: #2C3E50;
+      --bg-color-sidebar: #34495E;
+      --bg-color-topbar: #34495E;
+      --bg-color-card: #3D566E;
+      --bg-color-input: #4A637C;
+      --bg-color-button-secondary: #4A637C;
+      --bg-color-hover: #4CAF5020;
+      --bg-color-delete-light: #D32F2F30;
+
+      --border-color-main: #5C6E7E;
+      --border-color-delete: #EF9A9A;
+
+      --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.2);
+      --shadow-medium: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-color-primary);
+      line-height: 1.5;
+      font-size: var(--font-size-base);
+      background-color: var(--bg-color-body);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* --- Login Page --- */
     .login-page {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      height: 100vh; background: #f5f7fa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #4CAF50, #8BC34A, #388E3C);
+      background-size: 200% 200%;
+      animation: gradientShift 15s ease infinite alternate;
+      color: white;
     }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
     .login-box {
-      background: white; padding: 2rem; border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      background: rgba(255, 255, 255, 0.95);
+      padding: calc(var(--spacing-unit) * 3) calc(var(--spacing-unit) * 2);
+      border-radius: 10px;
+      box-shadow: var(--shadow-medium);
+      text-align: center;
+      width: 100%;
+      max-width: 350px;
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
+    html[data-theme='dark'] .login-box {
+      background: rgba(52, 73, 94, 0.95);
+    }
+
+
+    .login-box h2 {
+      font-size: var(--font-size-xl);
+      margin-bottom: calc(var(--spacing-unit) * 1.5);
+      color: var(--primary-color);
+      font-weight: 700;
+    }
+
     .login-box input {
-      display: block; width: 100%; margin: 1rem 0; padding: 0.5rem;
+      display: block;
+      width: 100%;
+      margin: var(--spacing-unit) 0;
+      padding: 0.7rem 0.9rem;
+      border: 1px solid var(--border-color-main);
+      border-radius: 6px;
+      font-size: var(--font-size-base);
+      transition: all 0.3s ease;
+      background-color: var(--bg-color-input);
+      color: var(--text-color-primary);
     }
+
+    .login-box input::placeholder {
+      color: var(--text-color-light);
+      opacity: 0.8;
+    }
+
+    .login-box input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    }
+
     .login-box button {
-      padding: 0.5rem 1rem; cursor: pointer;
+      width: 100%;
+      padding: 0.8rem 1.2rem;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      margin-top: calc(var(--spacing-unit) * 1.2);
     }
 
-    .app-container { display: flex; height: 100vh; }
+    .login-box button:hover {
+      background: var(--primary-dark-color);
+      transform: translateY(-1px);
+    }
+
+    #login-msg {
+      color: #D32F2F;
+      margin-top: var(--spacing-unit);
+      font-size: calc(var(--font-size-base) * 0.9);
+      font-weight: 500;
+    }
+
+    /* --- App Container --- */
+    .app-container {
+      display: flex;
+      height: 100vh;
+      background-color: var(--bg-color-body);
+      overflow: hidden;
+    }
+
+    /* --- Sidebar --- */
     .sidebar {
-      width: 240px; background: #ffffff; border-right: 1px solid #eee;
-      padding: 1rem; overflow-y: auto;
+      width: 220px;
+      background: var(--bg-color-sidebar);
+      border-right: 1px solid var(--border-color-main);
+      padding: calc(var(--spacing-unit) * 1.2);
+      overflow-y: auto;
+      box-shadow: 1px 0 6px rgba(0, 0, 0, 0.05);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      left: 0;
+      transition: left 0.3s ease-in-out;
     }
-    .sidebar h2 { font-size: 1.3rem; margin-bottom: 2rem; color: #5b5b5b; }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar h2 {
+      font-size: var(--font-size-xl);
+      margin-bottom: calc(var(--spacing-unit) * 2);
+      color: var(--primary-color);
+      text-align: center;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
     .sidebar .section-label {
-      margin-top: 1rem; font-size: 0.75rem; color: #006A4E; margin-bottom: 0.5rem;
+      margin-top: calc(var(--spacing-unit) * 1.2);
+      font-size: var(--font-size-base);
+      color: var(--text-color-secondary);
+      margin-bottom: calc(var(--spacing-unit) * 0.5);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      padding: 0.4rem 0.6rem;
+      border-radius: 5px;
+      transition: background-color 0.2s ease;
     }
+    
+    .sidebar .section-label:hover {
+      background-color: var(--bg-color-hover);
+    }
+
+    .sidebar .section-label span {
+      margin-left: auto;
+      font-size: calc(var(--font-size-base) * 0.8);
+      color: var(--text-color-light);
+      transition: transform 0.2s ease;
+    }
+
+    .sidebar .section-label.expanded span {
+      transform: rotate(90deg);
+    }
+
     .sidebar .menu-item {
-      display: flex; align-items: center; padding: 0.5rem 0;
-      font-size: 0.95rem; cursor: pointer; color: #444;
+      display: flex;
+      align-items: center;
+      padding: 0.7rem 0.8rem;
+      font-size: var(--font-size-base);
+      cursor: pointer;
+      color: var(--text-color-secondary);
+      border-radius: 6px;
+      margin-bottom: 0.2rem;
+      transition: background-color 0.2s ease, color 0.2s ease;
     }
+
+    .sidebar .menu-item:hover {
+      background-color: var(--bg-color-hover);
+      color: var(--primary-dark-color);
+    }
+
     .sidebar .menu-item i {
-      font-size: 24px !important; margin-right: 0.75rem; color: #777;
+      font-size: var(--icon-size-base) !important;
+      margin-right: 0.8rem;
+      color: var(--text-color-light);
+      transition: color 0.2s ease;
     }
 
+    .sidebar .menu-item:hover i {
+      color: var(--primary-color);
+    }
+
+    /* Mode Selector Styles */
+    .mode-selector {
+      margin-top: auto;
+      padding-top: var(--spacing-unit);
+      border-top: 1px solid var(--border-color-main);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .mode-selector label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: calc(var(--font-size-base) * 0.9);
+      color: var(--text-color-secondary);
+      cursor: pointer;
+      padding: 0.3rem 0;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+    }
+
+    .mode-selector label:hover {
+        background-color: var(--bg-color-hover);
+    }
+
+    .mode-selector input[type="radio"] {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--primary-color);
+      border-radius: 50%;
+      position: relative;
+      cursor: pointer;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .mode-selector input[type="radio"]:checked {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .mode-selector input[type="radio"]:checked::after {
+      content: '';
+      display: block;
+      width: 6px;
+      height: 6px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* --- Main Content Area --- */
     .main {
-      flex-grow: 1; padding: 1rem 2rem; background: #f5f7fa;
-      overflow-y: auto; position: relative;
+      flex-grow: 1;
+      padding: 0;
+      background: var(--bg-color-body);
+      overflow-y: auto;
+      position: relative;
+      width: 100%;
     }
+
     .topbar {
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0;
+      background-color: var(--bg-color-topbar);
+      padding: var(--spacing-unit);
+      border-radius: 0;
+      box-shadow: var(--shadow-light);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: var(--font-size-lg);
+      cursor: pointer;
+      color: var(--text-color-primary);
+      margin-right: var(--spacing-unit);
+    }
+
     .user-box {
-      display: flex; align-items: center; gap: 1rem;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-unit);
     }
+
     .user-name {
-      font-size: 0.9rem; color: #333;
+      font-size: var(--font-size-base);
+      color: var(--text-color-primary);
+      font-weight: 500;
     }
+
     .profile {
-      background: #444; color: white; width: 35px; height: 35px; border-radius: 50%;
-      display: flex; justify-content: center; align-items: center; font-size: 0.9rem;
+      background: var(--primary-color);
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: calc(var(--font-size-base) * 0.9);
+      font-weight: 600;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     }
+
     .logout-btn {
-      padding: 0.4rem 0.7rem; background: #eee; border: 1px solid #ccc;
-      border-radius: 6px; cursor: pointer;
+      padding: 0.5rem 1rem;
+      background: var(--bg-color-button-secondary);
+      border: 1px solid var(--border-color-main);
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text-color-secondary);
+      transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+      font-size: calc(var(--font-size-base) * 0.9);
     }
 
+    .logout-btn:hover {
+      background: #D32F2F;
+      color: white;
+      border-color: #D32F2F;
+    }
+
+    /* --- Cards --- */
     .cards {
-      display: flex; flex-wrap: wrap; gap: 1rem;
-    }
-    .card {
-      width: 300px; padding: 1rem; border-radius: 12px; background: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07); display: flex; align-items: center;
-      gap: 1rem; cursor: pointer; transition: 0.2s;
-    }
-    .card:hover {
-      transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    .card-icon {
-      background: #f2f0ff; color: #6c63ff; border-radius: 10px; padding: 0.75rem;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .card-content {
-      font-size: 1rem; font-weight: 500; color: #333;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-unit);
+      justify-content: flex-start;
+      padding: var(--spacing-unit) calc(var(--spacing-unit) * 2);
+      background-color: var(--bg-color-body);
     }
 
+    .card {
+      width: 220px;
+      padding: var(--spacing-unit);
+      border-radius: 12px;
+      background: var(--bg-color-card);
+      box-shadow: var(--shadow-light);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-medium);
+    }
+
+    .card-icon {
+      background: var(--primary-color);
+      color: white;
+      border-radius: 10px;
+      padding: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--icon-size-lg);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-icon i {
+      font-size: var(--icon-size-lg) !important;
+    }
+
+    .card-content {
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      color: var(--text-color-primary);
+    }
+
+    /* --- Iframe and Back Button --- */
     iframe {
-      width: 100%; height: 80vh; border: none;
+      width: 100%;
+      height: calc(100vh - 60px);
+      border: none;
+      border-radius: 0;
+      background-color: var(--bg-color-card);
+      box-shadow: none;
+      transition: background-color 0.3s ease;
     }
+
     #back-btn {
-      margin: 1rem 0;
+      display: none !important;
     }
-    #back-btn button {
-      padding: 0.5rem 1rem; background: #eee; border: 1px solid #0000; border-radius: 6px; font-weight: 500; cursor: pointer;
+
+    /* --- Admin Panel --- */
+    #admin-panel {
+      background: var(--bg-color-card);
+      padding: calc(var(--spacing-unit) * 1.5);
+      border-radius: 12px;
+      box-shadow: var(--shadow-light);
+      margin-bottom: calc(var(--spacing-unit) * 1.5);
+      margin-top: calc(var(--spacing-unit) * 1.5);
+      margin-left: calc(var(--spacing-unit) * 2);
+      margin-right: calc(var(--spacing-unit) * 2);
+      transition: background-color 0.3s ease;
+    }
+
+    #admin-panel h3 {
+      font-size: var(--font-size-lg);
+      margin-bottom: var(--spacing-unit);
+      color: var(--primary-color);
+      font-weight: 600;
     }
 
     #admin-panel input {
-      padding: 0.5rem; margin: 0.5rem 0.5rem 0.5rem 0;
-      border: 1px solid #ccc; width: 180px;
+      padding: 0.6rem 0.8rem;
+      margin: 0.4rem 0.6rem 0.4rem 0;
+      border: 1px solid var(--border-color-main);
+      border-radius: 6px;
+      width: 180px;
+      font-size: calc(var(--font-size-base) * 0.95);
+      transition: border-color 0.3s ease;
+      background-color: var(--bg-color-input);
+      color: var(--text-color-primary);
     }
+
+    #admin-panel input::placeholder {
+      color: var(--text-color-light);
+      opacity: 0.8;
+    }
+
+    #admin-panel input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    }
+
     #admin-panel button {
-      padding: 0.5rem 1rem; background: #6c63ff; color: white;
-      border: none; cursor: pointer; border-radius: 4px;
+      padding: 0.6rem 1.2rem;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: background 0.3s ease, transform 0.2s ease;
+      font-size: var(--font-size-base);
     }
+
+    #admin-panel button:hover {
+      background: var(--primary-dark-color);
+      transform: translateY(-1px);
+    }
+
     #admin-menu-list {
-      margin-top: 1rem; line-height: 2;
+      margin-top: var(--spacing-unit);
+      list-style: none;
+      padding: 0;
     }
+
+    #admin-menu-list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 0;
+      border-bottom: 1px dashed var(--border-color-main);
+      color: var(--text-color-secondary);
+      font-size: calc(var(--font-size-base) * 0.95);
+    }
+
+    #admin-menu-list li:last-child {
+      border-bottom: none;
+    }
+
     .delete-btn {
-      background: #ffefef; color: red; border: none;
-      padding: 0.2rem 0.5rem; border-radius: 6px; cursor: pointer; margin-left: 10px;
+      background: var(--bg-color-delete-light);
+      color: #D32F2F;
+      border: 1px solid var(--border-color-delete);
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 10px;
+      font-weight: 500;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+      font-size: calc(var(--font-size-base) * 0.9);
     }
 
-    .menu-item {
-  transition: background 0.2s;
-}
-.menu-item:hover {
-  background-color: #b4e7d0 !important; color: #000000;
-}
+    .delete-btn:hover {
+      background: #D32F2F;
+      color: white;
+      border-color: #D32F2F;
+    }
 
+    /* Role selection for multi-role users */
+    #role-title div {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+      font-size: calc(var(--font-size-base) * 0.9);
+      color: var(--text-color-secondary);
+    }
+
+    #role-title input[type="radio"] {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--primary-color);
+      border-radius: 50%;
+      margin-right: 4px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    #role-title input[type="radio"]:checked {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    #role-title input[type="radio"]:checked::before {
+      content: '';
+      display: block;
+      width: 7px;
+      height: 7px;
+      background-color: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    #role-title label {
+      cursor: pointer;
+    }
+
+    /* --- Dashboard Specific Styles --- */
+    #dashboard-content {
+      padding: calc(var(--spacing-unit) * 2);
+      background-color: var(--bg-color-body);
+      min-height: calc(100vh - 60px);
+    }
+
+    #dashboard-content h3 {
+      font-size: var(--font-size-lg);
+      margin-bottom: var(--spacing-unit);
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    #dashboard-content .dashboard-card {
+      background-color: var(--bg-color-card);
+      padding: calc(var(--spacing-unit) * 1.5);
+      border-radius: 12px;
+      box-shadow: var(--shadow-light);
+      margin-bottom: calc(var(--spacing-unit) * 1.5);
+      transition: background-color 0.3s ease;
+    }
+
+    #dashboard-content .dashboard-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-unit);
+      margin-bottom: calc(var(--spacing-unit) * 2);
+    }
+
+    #dashboard-content .stat-item {
+      flex: 1;
+      min-width: 150px;
+      background-color: var(--bg-color-card);
+      padding: var(--spacing-unit);
+      border-radius: 8px;
+      box-shadow: var(--shadow-light);
+      text-align: center;
+      transition: background-color 0.3s ease;
+    }
+
+    #dashboard-content .stat-item .value {
+      font-size: calc(var(--font-size-xl) * 1.2);
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    #dashboard-content .stat-item .label {
+      font-size: calc(var(--font-size-base) * 0.9);
+      color: var(--text-color-secondary);
+    }
+
+    #dashboard-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: var(--spacing-unit);
+    }
+
+    #dashboard-content th, #dashboard-content td {
+      border: 1px solid var(--border-color-main);
+      padding: 0.8rem;
+      text-align: left;
+      font-size: calc(var(--font-size-base) * 0.95);
+      color: var(--text-color-secondary);
+    }
+
+    #dashboard-content th {
+      background-color: var(--bg-color-button-secondary);
+      font-weight: 600;
+      color: var(--text-color-primary);
+      transition: background-color 0.3s ease;
+    }
+
+    #dashboard-content tr:nth-child(even) {
+      background-color: var(--bg-color-body);
+    }
+    #dashboard-content tr:hover {
+      background-color: var(--bg-color-hover);
+    }
+    
+    html[data-theme='dark'] #dashboard-content tr:nth-child(even) {
+      background-color: var(--bg-color-body);
+    }
+
+    /* --- Mobile Responsiveness --- */
+    @media (max-width: 768px) {
+      .app-container {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 250px;
+        position: fixed;
+        height: 100%;
+        z-index: 1000;
+        left: -250px;
+        box-shadow: 4px 0 10px rgba(0, 0, 0, 0.2);
+      }
+      
+      .sidebar.active {
+        left: 0;
+      }
+
+      .main {
+        width: 100%;
+        padding-bottom: 0;
+      }
+
+      .topbar {
+        padding: var(--spacing-unit);
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      .cards {
+        justify-content: center;
+        padding: var(--spacing-unit);
+      }
+
+      .card {
+        width: calc(50% - var(--spacing-unit) / 2);
+        max-width: 180px;
+        font-size: calc(var(--font-size-base) * 0.9);
+      }
+
+      .card-content {
+        font-size: calc(var(--font-size-base) * 0.9);
+      }
+
+      iframe {
+        height: calc(100vh - 60px);
+      }
+
+      #admin-panel, #dashboard-content {
+        margin: var(--spacing-unit);
+        padding: var(--spacing-unit);
+      }
+
+      #admin-panel input {
+        width: 100%;
+        margin-right: 0;
+      }
+
+      #admin-panel button {
+        width: 100%;
+        margin-top: var(--spacing-unit);
+      }
+
+      #admin-menu-list li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .delete-btn {
+        margin-left: 0;
+        margin-top: 0.5rem;
+      }
+
+      #dashboard-content .dashboard-stats {
+        flex-direction: column;
+      }
+
+      #dashboard-content .stat-item {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        width: 95%;
+        max-width: 300px;
+      }
+
+      .login-box {
+        margin: var(--spacing-unit);
+      }
+
+      .sidebar {
+        width: 80%;
+        left: -80%;
+      }
+    }
   </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="login-section" class="login-page">
   <div class="login-box">
-    <h2>🔐 Sparkl-MIS Login</h2>
+    <h2>🔐 Sparkl-Alpha MIS</h2>
     <input id="userid" placeholder="User ID" />
     <input id="password" type="password" placeholder="Password" />
     <button onclick="login()">Login</button>
-    <p id="login-msg" style="color:red;margin-top:1rem;"></p>
+    <p id="login-msg"></p>
   </div>
 </div>
 
 
-<!-- APP -->
 <div id="app" class="hidden app-container">
-  <div class="sidebar">
-    <h2>⭐ SPARKL MIS</h2>
+  <div class="sidebar" id="sidebar">
+    <h2>⭐ Sparkl-Alpha MIS</h2>
     <div id="sidebar-sections"></div>
+
+    <div class="mode-selector">
+      <label>Mode:</label>
+      <label>
+        <input type="radio" name="theme-mode" value="system" checked>
+        System Default
+      </label>
+      <label>
+        <input type="radio" name="theme-mode" value="light">
+        Light
+      </label>
+      <label>
+        <input type="radio" name="theme-mode" value="dark">
+        Dark
+      </label>
+    </div>
   </div>
 
   <div class="main">
     <div class="topbar">
+      <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
       <div id="role-title" class="user-name"></div>
       <div class="user-box">
         <div class="profile"><span id="profile-initial">U</span></div>
         <div class="header-controls">
-  <button class="logout-btn" onclick="logout()">Logout</button>
-  
-</div>
-
+          <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
       </div>
     </div>
 
-    <div id="back-btn" class="hidden" style="display: flex; gap: 10px; margin: 1rem 0;">
-  <button onclick="goBack()">🔙 Back</button>
-  <button onclick="openFullScreen()">🗖 Full Screen</button>
-</div>
-
+    <div id="back-btn" class="hidden">
+      <button onclick="goBack()">🔙 Back</button>
+      <button onclick="openFullScreen()">🗖 Full Screen</button>
+    </div>
 
     <div id="admin-panel" class="hidden">
       <h3>Add Menu</h3>
@@ -167,88 +872,264 @@
       <input id="link" placeholder="URL" />
       <input id="icon" placeholder="Material Icon" />
       <button onclick="addEntry()">Add</button>
-      <h3 style="margin-top:1rem;">All Menu Items</h3>
+      <h3 style="margin-top:var(--spacing-unit);">All Menu Items</h3>
       <ul id="admin-menu-list"></ul>
     </div>
 
-    <div id="main-content" class="cards"></div>
+    <div id="main-content" class="cards">
+      </div>
+
+    <div id="dashboard-content" class="hidden">
+      </div>
+
     <iframe id="iframe-view" class="hidden"></iframe>
   </div>
-
-  
 </div>
 
 <script>
-let user = {}, currentLink = "", currentMenu = "";
+// --- Configuration for API calls ---
+// !!! IMPORTANT: Replace 'YOUR_DEPLOYED_APPS_SCRIPT_API_URL_HERE' with the actual Web App URL
+//     you get after deploying your Code.gs for Scenario 2.
+//     Make sure the Code.gs is deployed as "Execute as: Me" and "Who has access: Anyone".
+const APPS_SCRIPT_API_URL = 'YOUR_DEPLOYED_APPS_SCRIPT_API_URL_HERE'; 
+
+// --- Frontend Global State (Simplified for this example) ---
+let user = {}; 
+let currentLink = ""; 
+let currentMenu = ""; 
+let activeView = "cards"; 
+let loggedInUserRoles = []; // Store roles here after successful login
+
+// --- Theme management functions (unchanged) ---
+const themeRadios = document.querySelectorAll('input[name="theme-mode"]');
+const htmlElement = document.documentElement;
+
+function getSystemTheme() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function setTheme(themeName) {
+  if (themeName === 'system') {
+    htmlElement.dataset.theme = getSystemTheme();
+    localStorage.removeItem('theme');
+    const systemRadio = document.querySelector('input[name="theme-mode"][value="system"]');
+    if (systemRadio) systemRadio.checked = true;
+  } else {
+    htmlElement.dataset.theme = themeName;
+    localStorage.setItem('theme', themeName);
+    const selectedRadio = document.querySelector(`input[name="theme-mode"][value="${themeName}"]`);
+    if (selectedRadio) selectedRadio.checked = true;
+  }
+}
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+  if (localStorage.getItem('theme') === null || localStorage.getItem('theme') === 'system') {
+    setTheme('system');
+  }
+});
+
+themeRadios.forEach(radio => {
+  radio.addEventListener('change', (event) => {
+    setTheme(event.target.value);
+  });
+});
 
 window.onload = () => {
-  const saved = sessionStorage.getItem("user");
-  if (saved) {
-    user = JSON.parse(saved);
+  const savedUser = sessionStorage.getItem("user");
+  if (savedUser) {
+    user = JSON.parse(savedUser);
+    loggedInUserRoles = user.roles; // Populate roles from session
     loadPortal(user.roles);
+  }
+
+  const storedTheme = localStorage.getItem('theme');
+  if (storedTheme) {
+    setTheme(storedTheme);
+  } else {
+    setTheme('system');
   }
 };
 
-function login() {
+// --- API Calls using fetch() ---
+
+async function login() {
   const id = document.getElementById("userid").value;
   const pass = document.getElementById("password").value;
-  google.script.run.withSuccessHandler(res => {
-    if (res.success) {
-      user = { id: res.user, roles: res.roles };
+  document.getElementById("login-msg").innerText = "";
+
+  try {
+    const response = await fetch(APPS_SCRIPT_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'checkLogin', id: id, password: pass })
+    });
+    const result = await response.json();
+
+    if (result.success) {
+      user = { id: result.user, roles: result.roles };
+      loggedInUserRoles = result.roles; // Store roles from login
       sessionStorage.setItem("user", JSON.stringify(user));
       loadPortal(user.roles);
     } else {
       document.getElementById("login-msg").innerText = "❌ Invalid credentials";
     }
-  }).checkLogin(id, pass);
+  } catch (error) {
+    console.error("Login failed:", error);
+    document.getElementById("login-msg").innerText = "An error occurred during login.";
+  }
 }
+
+async function getMenuData() {
+  // ⚠️ In a production app, you would send an authentication token here
+  //    e.g., in a header: headers: { 'Authorization': `Bearer ${user.authToken}` }
+  try {
+    const response = await fetch(`${APPS_SCRIPT_API_URL}?action=getMenuData`);
+    const result = await response.json();
+    if (result.success) {
+      return result.data;
+    } else {
+      console.error("Failed to fetch menu data:", result.message);
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching menu data:", error);
+    return [];
+  }
+}
+
+async function addEntry() {
+  // ⚠️ In a production app, you would send an authentication token here
+  //    And the backend would verify user's 'Admin' role.
+  const role = document.getElementById("role").value;
+  const menu = document.getElementById("menu").value;
+  const submenu = document.getElementById("submenu").value;
+  const link = document.getElementById("link").value;
+  const icon = document.getElementById("icon").value;
+
+  try {
+    const response = await fetch(APPS_SCRIPT_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'addMenuEntry', role, menu, submenu, link, icon })
+    });
+    const result = await response.json();
+    if (result.success) {
+      alert("Menu entry added successfully!");
+      document.getElementById("role").value = "";
+      document.getElementById("menu").value = "";
+      document.getElementById("submenu").value = "";
+      document.getElementById("link").value = "";
+      document.getElementById("icon").value = "";
+      loadAdminMenu(); // Reload list
+    } else {
+      alert("Failed to add menu entry: " + result.message);
+    }
+  } catch (error) {
+    console.error("Error adding menu entry:", error);
+    alert("An error occurred while adding menu entry.");
+  }
+}
+
+async function deleteEntry(index) {
+  // ⚠️ In a production app, you would send an authentication token here
+  //    And the backend would verify user's 'Admin' role.
+  if (!confirm("Are you sure you want to delete this item?")) return;
+
+  try {
+    const response = await fetch(APPS_SCRIPT_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'deleteMenuEntry', index: index })
+    });
+    const result = await response.json();
+    if (result.success) {
+      alert("Menu entry deleted successfully!");
+      loadAdminMenu(); // Reload list
+    } else {
+      alert("Failed to delete menu entry: " + result.message);
+    }
+  } catch (error) {
+    console.error("Error deleting menu entry:", error);
+    alert("An error occurred while deleting menu entry.");
+  }
+}
+
+// --- Remaining Frontend Logic (Adapted for API data) ---
 
 function logout() {
   sessionStorage.clear();
-  location.reload();
+  user = {};
+  loggedInUserRoles = []; // Clear roles on logout
+  document.getElementById("login-section").classList.remove("hidden");
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("userid").value = "";
+  document.getElementById("password").value = "";
+  document.getElementById("login-msg").innerText = "";
+  const systemRadio = document.querySelector('input[name="theme-mode"][value="system"]');
+  if (systemRadio) systemRadio.checked = true;
+  setTheme('system');
+}
+
+function toggleSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  sidebar.classList.toggle("active");
+}
+
+function hideAllViews() {
+  document.getElementById("main-content").classList.add("hidden");
+  document.getElementById("iframe-view").classList.add("hidden");
+  document.getElementById("admin-panel").classList.add("hidden");
+  document.getElementById("dashboard-content").classList.add("hidden");
 }
 
 function openItem(link, menu, submenu) {
-  const iframe = document.getElementById("iframe-view");
-  const content = document.getElementById("main-content");
-  const backBtn = document.getElementById("back-btn");
+  hideAllViews();
+
+  const sidebar = document.getElementById("sidebar");
+  if (sidebar.classList.contains("active")) {
+    sidebar.classList.remove("active");
+  }
 
   currentMenu = menu;
 
-  if (link.includes("lookerstudio.google.com")) {
+  if (link === 'internal:dashboard') {
+    activeView = "dashboard";
+    document.getElementById("dashboard-content").classList.remove("hidden");
+    renderDashboard();
+  } else if (link.includes("lookerstudio.google.com")) {
     window.open(link, '_blank');
-    return;
+    activeView = "cards";
+    document.getElementById("main-content").classList.remove("hidden");
+  } else {
+    activeView = "iframe";
+    currentLink = link.includes("docs.google.com") && !link.includes("rm=minimal")
+    ? link + (link.includes("?") ? "&rm=minimal" : "?rm=minimal")
+    : link;
+    document.getElementById("iframe-view").src = currentLink;
+    document.getElementById("iframe-view").classList.remove("hidden");
   }
-
-  // Add minimal UI mode for Google Docs/Sheets/Slides
-  currentLink = link.includes("docs.google.com") && !link.includes("rm=minimal")
-  ? link + (link.includes("?") ? "&rm=minimal" : "?rm=minimal")
-  : link;
-
-
-  iframe.src = currentLink;
-  iframe.classList.remove("hidden");
-  content.classList.add("hidden");
-  backBtn.classList.remove("hidden");
 }
 
-
 function goBack() {
-  const iframe = document.getElementById("iframe-view");
-  const content = document.getElementById("main-content");
-  const backBtn = document.getElementById("back-btn");
+  hideAllViews();
+  activeView = "cards";
+  document.getElementById("main-content").classList.remove("hidden");
 
-  iframe.classList.add("hidden");
-  iframe.src = "";
-  content.classList.remove("hidden");
-  backBtn.classList.add("hidden");
+  const selectedRoleRadio = document.querySelector('input[name="role-select"]:checked');
+  const activeRole = selectedRoleRadio ? selectedRoleRadio.value : (user.roles && user.roles.length > 0 ? user.roles[0] : null);
+
+  if (activeRole === "Admin" && loggedInUserRoles.includes("Admin")) { // Check actual logged in roles
+      document.getElementById("admin-panel").classList.remove("hidden");
+  } else {
+      document.getElementById("admin-panel").classList.add("hidden");
+  }
 
   if (currentMenu) {
     filterCardsByGroup(currentMenu);
   } else {
     const cards = document.querySelectorAll(".card");
     cards.forEach(card => {
-      card.style.display = "none";
+      card.style.display = "flex";
     });
   }
 }
@@ -261,7 +1142,6 @@ function openFullScreen() {
   }
 }
 
-
 function filterCardsByGroup(menuGroup) {
   currentMenu = menuGroup;
   const cards = document.querySelectorAll(".card");
@@ -269,8 +1149,9 @@ function filterCardsByGroup(menuGroup) {
     card.style.display = card.dataset.menu === menuGroup ? "flex" : "none";
   });
   document.getElementById("iframe-view").classList.add("hidden");
-  document.getElementById("back-btn").classList.add("hidden");
   document.getElementById("main-content").classList.remove("hidden");
+  document.getElementById("dashboard-content").classList.add("hidden");
+  document.getElementById("admin-panel").classList.add("hidden");
 }
 
 function loadPortal(roles) {
@@ -283,13 +1164,14 @@ function loadPortal(roles) {
     const roleWrapper = document.createElement("div");
     roleWrapper.style.marginTop = "8px";
     user.roles.forEach(role => {
-      const checkbox = document.createElement("input");
-      checkbox.type = "radio";
-      checkbox.name = "role-select";
-      checkbox.value = role;
-      checkbox.id = `role_${role}`;
-      checkbox.onclick = () => {
-        if (role === "Admin") {
+      const radioInput = document.createElement("input");
+      radioInput.type = "radio";
+      radioInput.name = "role-select";
+      radioInput.value = role;
+      radioInput.id = `role_${role}`;
+      radioInput.onclick = () => {
+        // IMPORTANT: Verify `loggedInUserRoles` for sensitive actions
+        if (role === "Admin" && loggedInUserRoles.includes("Admin")) { 
           document.getElementById("admin-panel").classList.remove("hidden");
           loadAdminMenu();
         } else {
@@ -297,20 +1179,20 @@ function loadPortal(roles) {
         }
         loadPublicMenu(user.id, [role]);
       };
-      if (role === user.roles[0]) checkbox.checked = true;
+      if (role === user.roles[0]) radioInput.checked = true; // Select first role by default
 
       const label = document.createElement("label");
       label.htmlFor = `role_${role}`;
       label.innerText = role;
       label.style.marginRight = "10px";
-      roleWrapper.appendChild(checkbox);
+      roleWrapper.appendChild(radioInput);
       roleWrapper.appendChild(label);
     });
     document.getElementById("role-title").appendChild(roleWrapper);
   }
 
   const defaultRole = user.roles.includes("Admin") ? "Admin" : user.roles[0];
-  if (defaultRole === "Admin") {
+  if (defaultRole === "Admin" && loggedInUserRoles.includes("Admin")) { // Check actual logged in roles
     document.getElementById("admin-panel").classList.remove("hidden");
     loadAdminMenu();
   } else {
@@ -319,93 +1201,189 @@ function loadPortal(roles) {
   loadPublicMenu(user.id, [defaultRole]);
 }
 
-function loadPublicMenu(userId, userRoles) {
-  google.script.run.withSuccessHandler(data => {
-    const grouped = {};
-    const isAllAccess = userId.toLowerCase() === "all";
+async function loadPublicMenu(userId, userRoles) {
+  const data = await getMenuData(); // Use the new API call
+  const grouped = {};
+  const isAllAccess = userId.toLowerCase() === "all";
 
-    data.forEach(([role, menu, submenu, link, icon]) => {
-      const roleList = role.split(",").map(r => r.trim().toLowerCase());
-      const match = isAllAccess ? roleList.includes("all") : roleList.some(r => userRoles.map(u => u.toLowerCase()).includes(r));
+  if (isAllAccess || userRoles.map(u => u.toLowerCase()).includes('admin') || userRoles.map(u => u.toLowerCase()).includes('public')) {
+      if (!grouped['Main']) grouped['Main'] = [];
+      grouped['Main'].unshift({ submenu: 'Dashboard', link: 'internal:dashboard', icon: 'dashboard', menu: 'Main' });
+  }
 
-      if (match) {
-        if (!grouped[menu]) grouped[menu] = [];
+  data.forEach(([role, menu, submenu, link, icon]) => {
+    const roleList = String(role).split(",").map(r => r.trim().toLowerCase());
+    const match = isAllAccess ? roleList.includes("all") : roleList.some(r => userRoles.map(u => u.toLowerCase()).includes(r));
+
+    if (match) {
+      if (!grouped[menu]) grouped[menu] = [];
+      if (link !== 'internal:dashboard') {
         grouped[menu].push({ submenu, link, icon, menu });
+      }
+    }
+  });
+
+  const sidebar = document.getElementById("sidebar-sections");
+  const content = document.getElementById("main-content");
+  sidebar.innerHTML = '';
+  content.innerHTML = '';
+
+  for (let menu in grouped) {
+    const sectionWrapper = document.createElement("div");
+    const label = document.createElement("div");
+    label.className = "section-label";
+    label.innerText = menu;
+    label.style.fontSize = "1.1rem";
+    label.style.fontWeight = "bold";
+    label.style.cursor = "pointer";
+
+    const arrow = document.createElement("span");
+    arrow.innerHTML = "▶";
+    arrow.style.marginLeft = "10px";
+    arrow.style.fontSize = "0.9rem";
+    label.appendChild(arrow);
+
+    const sectionItems = document.createElement("div");
+    sectionItems.style.marginTop = "5px";
+    sectionItems.style.display = "none";
+    
+    label.onclick = () => {
+      const isCurrentlyVisible = sectionItems.style.display === "block";
+      
+      document.querySelectorAll('.sidebar .section-items').forEach(item => {
+        if (item !== sectionItems) {
+          item.style.display = 'none';
+          item.previousElementSibling.querySelector('span').innerHTML = "▶";
+          item.previousElementSibling.classList.remove('expanded');
+        }
+      });
+
+      sectionItems.style.display = isCurrentlyVisible ? "none" : "block";
+      arrow.innerHTML = isCurrentlyVisible ? "▶" : "▼";
+      label.classList.toggle('expanded', !isCurrentlyVisible);
+
+      currentMenu = menu;
+      hideAllViews();
+      document.getElementById("main-content").classList.remove("hidden");
+      const cards = document.querySelectorAll(".card");
+      cards.forEach(card => {
+        card.style.display = (card.dataset.menu === menu && !isCurrentlyVisible) ? "flex" : "none";
+      });
+    };
+    
+    sectionItems.classList.add('section-items');
+
+    grouped[menu].forEach(item => {
+      const btn = document.createElement("div");
+      btn.className = "menu-item";
+      btn.style.borderRadius = "6px";
+      btn.style.padding = "5px 10px";
+      btn.innerHTML = `<i class="material-icons">${item.icon}</i> ${item.submenu}`;
+      btn.onclick = () => openItem(item.link, item.menu, item.submenu);
+      sectionItems.appendChild(btn);
+
+      if (item.link !== 'internal:dashboard') {
+          const card = document.createElement("div");
+          card.className = "card";
+          card.dataset.menu = item.menu;
+          card.onclick = () => openItem(item.link, item.menu, item.submenu);
+          card.style.display = "none";
+          card.innerHTML = `
+          <div class="card-icon">
+              <i class="material-icons">${item.icon}</i>
+          </div>
+          <div class="card-content">${item.submenu}</div>
+          `;
+          content.appendChild(card);
       }
     });
 
-    const sidebar = document.getElementById("sidebar-sections");
-    const content = document.getElementById("main-content");
-    sidebar.innerHTML = '';
-    content.innerHTML = '<p style="text-align:center; padding-top:50px;"></p>';
+    sectionWrapper.appendChild(label);
+    sectionWrapper.appendChild(sectionItems);
+    sidebar.appendChild(sectionWrapper);
+  }
+  
+  const firstMenu = Object.keys(grouped)[0];
+  if (firstMenu) {
+      document.querySelector(`.sidebar .section-label`).click();
+      if (grouped[firstMenu][0].link === 'internal:dashboard') {
+          openItem('internal:dashboard', grouped[firstMenu][0].menu, grouped[firstMenu][0].submenu);
+      }
+  }
+}
 
-    for (let menu in grouped) {
-      const sectionWrapper = document.createElement("div");
-      const label = document.createElement("div");
-      label.className = "section-label";
-      label.innerText = menu;
-      label.style.fontSize = "1.1rem";
-      label.style.fontWeight = "bold";
-      label.style.cursor = "pointer";
+async function loadAdminMenu() {
+  const adminMenuList = document.getElementById("admin-menu-list");
+  adminMenuList.innerHTML = '';
+  // ⚠️ In a production app, the backend should verify 'Admin' role here too.
+  const data = await getMenuData(); // Get all menu data
 
-      const arrow = document.createElement("span");
-      arrow.innerHTML = "▼";
-      arrow.style.marginLeft = "10px";
-      arrow.style.fontSize = "0.9rem";
-      label.appendChild(arrow);
+  data.forEach((row, index) => {
+    // Row is [role, menu, submenu, link, icon]
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <span>${row[0]} - ${row[1]} / ${row[2]} (${row[4]})</span>
+      <button class="delete-btn" onclick="deleteEntry(${index})">Delete</button>
+    `;
+    adminMenuList.appendChild(li);
+  });
+}
 
-      const sectionItems = document.createElement("div");
-      sectionItems.style.marginTop = "5px";
-      sectionItems.style.display = "none";
+function renderDashboard() {
+  const dashboardContent = document.getElementById('dashboard-content');
+  dashboardContent.innerHTML = `
+    <div class="dashboard-card">
+      <h3>Overall Metrics</h3>
+      <div class="dashboard-stats">
+        <div class="stat-item">
+          <div class="value">12,345</div>
+          <div class="label">Total Users</div>
+        </div>
+        <div class="stat-item">
+          <div class="value">$56,789</div>
+          <div class="label">Revenue (MTD)</div>
+        </div>
+        <div class="stat-item">
+          <div class="value">87%</div>
+          <div class="label">Satisfaction</div>
+        </div>
+        <div class="stat-item">
+          <div class="value">2.5M</div>
+          <div class="label">Page Views</div>
+        </div>
+      </div>
+    </div>
 
-      label.onclick = () => {
-        const visible = sectionItems.style.display !== "block";
-        sectionItems.style.display = visible ? "block" : "none";
-        arrow.innerHTML = visible ? "▶" : "▼";
+    <div class="dashboard-card">
+      <h3>Recent Activity</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Activity</th>
+            <th>User</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>2025-06-09</td><td>Report Generated</td><td>User A</td><td>Completed</td></tr>
+          <tr><td>2025-06-09</td><td>Data Update</td><td>Admin B</td><td>Success</td></tr>
+          <tr><td>2025-06-08</td><td>New User Added</td><td>Admin C</td><td>Completed</td></tr>
+          <tr><td>2025-06-08</td><td>API Call</td><td>System</td><td>Success</td></tr>
+        </tbody>
+      </table>
+    </div>
 
-        currentMenu = menu;
-        const cards = document.querySelectorAll(".card");
-        cards.forEach(card => {
-          card.style.display = (card.dataset.menu === menu && visible) ? "flex" : "none";
-        });
-
-        document.getElementById("iframe-view").classList.add("hidden");
-        document.getElementById("main-content").classList.remove("hidden");
-        document.getElementById("back-btn").classList.add("hidden");
-      };
-
-      grouped[menu].forEach(item => {
-        // Sidebar button
-        const btn = document.createElement("div");
-        btn.className = "menu-item";
-        btn.style.borderRadius = "6px";
-        btn.style.padding = "5px 10px";
-        btn.onmouseover = () => btn.style.backgroundColor = "#b4e7d0";
-        btn.onmouseout = () => btn.style.backgroundColor = "";
-        btn.innerHTML = `<i class="material-icons">${item.icon}</i> ${item.submenu}`;
-        btn.onclick = () => openItem(item.link, item.menu, item.submenu);
-        sectionItems.appendChild(btn);
-
-        // Card for main content
-        const card = document.createElement("div");
-        card.className = "card";
-        card.dataset.menu = item.menu;
-        card.onclick = () => openItem(item.link, item.menu, item.submenu);
-        card.style.display = "none"; // 🔍 Hide by default
-        card.innerHTML = `
-          <div class="card-icon">
-            <i class="material-icons">${item.icon}</i>
-          </div>
-          <div class="card-content">${item.submenu}</div>
-        `;
-        content.appendChild(card);
-      });
-
-      sectionWrapper.appendChild(label);
-      sectionWrapper.appendChild(sectionItems);
-      sidebar.appendChild(sectionWrapper);
-    }
-  }).getMenuData();
+    <div class="dashboard-card">
+      <h3>Performance Trends (Placeholder)</h3>
+      <p style="text-align: center; color: var(--text-color-secondary);">
+        This section could contain interactive charts (e.g., using D3.js) showing performance trends.
+      </p>
+      <div style="height: 200px; background-color: var(--bg-color-input); border-radius: 8px; display: flex; justify-content: center; align-items: center; color: var(--text-color-light);">
+        [Chart Placeholder]
+      </div>
+    </div>
+  `;
 }
 </script>
 </body>

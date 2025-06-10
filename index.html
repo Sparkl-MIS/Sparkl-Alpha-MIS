@@ -888,10 +888,9 @@
 
 <script>
 // --- Configuration for API calls ---
-// !!! IMPORTANT: Replace 'YOUR_DEPLOYED_APPS_SCRIPT_API_URL_HERE' with the actual Web App URL
-//     you get after deploying your Code.gs for Scenario 2.
-//     Make sure the Code.gs is deployed as "Execute as: Me" and "Who has access: Anyone".
-const APPS_SCRIPT_API_URL = 'https://script.google.com/macros/s/AKfycbyFIFiw3OvD9-dsTsoIZxhca6iGTsp_VLZ4cx0mOQXqLLcI6d5cC33bOHh00NKo_PtL/exec'; 
+// !!! IMPORTANT: This URL MUST be your deployed Google Apps Script Web App API URL.
+//    This has been updated with the URL you provided.
+const APPS_SCRIPT_API_URL = 'https://script.google.com/macros/s/AKfycbz2m6XeIyesqp9rl1mK2uYUARH9gL8qYRW9-lE7IpfJgpZIcKi6d_7LIhT9timt-frm/exec'; 
 
 // --- Frontend Global State (Simplified for this example) ---
 let user = {}; 
@@ -975,7 +974,7 @@ async function login() {
     }
   } catch (error) {
     console.error("Login failed:", error);
-    document.getElementById("login-msg").innerText = "An error occurred during login.";
+    document.getElementById("login-msg").innerText = "An error occurred during login. Check console for details.";
   }
 }
 

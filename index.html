@@ -478,7 +478,31 @@
 
     #back-btn {
       display: none !important;
+      padding: var(--spacing-unit);
+      background-color: var(--bg-color-topbar);
+      box-shadow: var(--shadow-light);
+      position: sticky;
+      top: 0;
+      z-index: 9;
+      justify-content: flex-start;
+      gap: var(--spacing-unit);
     }
+
+    #back-btn button {
+      padding: 0.5rem 1rem;
+      background: var(--bg-color-button-secondary);
+      border: 1px solid var(--border-color-main);
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text-color-secondary);
+      transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+      font-size: calc(var(--font-size-base) * 0.9);
+    }
+    #back-btn button:hover {
+      background: var(--bg-color-hover);
+    }
+
 
     /* --- Admin Panel --- */
     #admin-panel {
@@ -742,6 +766,10 @@
         display: block;
       }
 
+      #back-btn {
+        display: flex !important; /* Always show back button on mobile */
+      }
+
       .cards {
         justify-content: center;
         padding: var(--spacing-unit);
@@ -890,7 +918,7 @@
 // --- Configuration for API calls ---
 // !!! IMPORTANT: This URL MUST be your deployed Google Apps Script Web App API URL.
 //    This has been updated with the URL you provided.
-const APPS_SCRIPT_API_URL = 'https://script.google.com/macros/s/AKfycbx1lCXL45zJ1wQT9DBGu8P0fhMPWsI-9dQEUX17BeNGEhFvVT8QDXT6e2JZhjon5QgC/exec'; 
+const APPS_SCRIPT_API_URL = 'https://script.google.com/macros/s/AKfycbz0vgVAxIjJScDUgP9jL6GoIoy5xTCKeFp0ds4EStewWI52SsLII0q3lqZT5yPtHLjB/exec'; 
 
 // --- Frontend Global State (Simplified for this example) ---
 let user = {}; 
@@ -962,6 +990,11 @@ async function login() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'checkLogin', id: id, password: pass })
     });
+    
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
     const result = await response.json();
 
     if (result.success) {
@@ -970,11 +1003,11 @@ async function login() {
       sessionStorage.setItem("user", JSON.stringify(user));
       loadPortal(user.roles);
     } else {
-      document.getElementById("login-msg").innerText = "❌ Invalid credentials";
+      document.getElementById("login-msg").innerText = `❌ ${result.message || 'Invalid credentials'}`;
     }
   } catch (error) {
     console.error("Login failed:", error);
-    document.getElementById("login-msg").innerText = "An error occurred during login. Check console for details.";
+    document.getElementById("login-msg").innerText = `An error occurred during login. Details: ${error.message}. Check browser console.`;
   }
 }
 
@@ -983,15 +1016,22 @@ async function getMenuData() {
   //    e.g., in a header: headers: { 'Authorization': `Bearer ${user.authToken}` }
   try {
     const response = await fetch(`${APPS_SCRIPT_API_URL}?action=getMenuData`);
+    
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
     const result = await response.json();
     if (result.success) {
       return result.data;
     } else {
       console.error("Failed to fetch menu data:", result.message);
+      alert(`Failed to fetch menu data: ${result.message}`);
       return [];
     }
   } catch (error) {
     console.error("Error fetching menu data:", error);
+    alert(`An error occurred while fetching menu data: ${error.message}`);
     return [];
   }
 }
@@ -1011,6 +1051,11 @@ async function addEntry() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'addMenuEntry', role, menu, submenu, link, icon })
     });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
     const result = await response.json();
     if (result.success) {
       alert("Menu entry added successfully!");
@@ -1021,11 +1066,11 @@ async function addEntry() {
       document.getElementById("icon").value = "";
       loadAdminMenu(); // Reload list
     } else {
-      alert("Failed to add menu entry: " + result.message);
+      alert("Failed to add menu entry: " + (result.message || "Unknown error."));
     }
   } catch (error) {
     console.error("Error adding menu entry:", error);
-    alert("An error occurred while adding menu entry.");
+    alert(`An error occurred while adding menu entry: ${error.message}`);
   }
 }
 
@@ -1040,16 +1085,21 @@ async function deleteEntry(index) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'deleteMenuEntry', index: index })
     });
+    
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
     const result = await response.json();
     if (result.success) {
       alert("Menu entry deleted successfully!");
       loadAdminMenu(); // Reload list
     } else {
-      alert("Failed to delete menu entry: " + result.message);
+      alert("Failed to delete menu entry: " + (result.message || "Unknown error. Check Apps Script logs."));
     }
   } catch (error) {
     console.error("Error deleting menu entry:", error);
-    alert("An error occurred while deleting menu entry.");
+    alert(`An error occurred while deleting menu entry: ${error.message}. Please check Apps Script execution logs.`);
   }
 }
 
@@ -1079,6 +1129,7 @@ function hideAllViews() {
   document.getElementById("iframe-view").classList.add("hidden");
   document.getElementById("admin-panel").classList.add("hidden");
   document.getElementById("dashboard-content").classList.add("hidden");
+  document.getElementById("back-btn").classList.add("hidden"); /* Hide back button too */
 }
 
 function openItem(link, menu, submenu) {
@@ -1090,6 +1141,7 @@ function openItem(link, menu, submenu) {
   }
 
   currentMenu = menu;
+  document.getElementById("back-btn").classList.remove("hidden"); /* Show back button when an item is opened */
 
   if (link === 'internal:dashboard') {
     activeView = "dashboard";
@@ -1099,6 +1151,9 @@ function openItem(link, menu, submenu) {
     window.open(link, '_blank');
     activeView = "cards";
     document.getElementById("main-content").classList.remove("hidden");
+    // If opening in new tab, the back button is not needed for the iframe,
+    // so we can go back to cards view.
+    goBack(); 
   } else {
     activeView = "iframe";
     currentLink = link.includes("docs.google.com") && !link.includes("rm=minimal")
@@ -1113,16 +1168,20 @@ function goBack() {
   hideAllViews();
   activeView = "cards";
   document.getElementById("main-content").classList.remove("hidden");
+  document.getElementById("back-btn").classList.add("hidden"); /* Hide back button when going back to main cards */
+
 
   const selectedRoleRadio = document.querySelector('input[name="role-select"]:checked');
   const activeRole = selectedRoleRadio ? selectedRoleRadio.value : (user.roles && user.roles.length > 0 ? user.roles[0] : null);
 
   if (activeRole === "Admin" && loggedInUserRoles.includes("Admin")) { // Check actual logged in roles
       document.getElementById("admin-panel").classList.remove("hidden");
+      loadAdminMenu(); // Reload admin menu to ensure it's fresh
   } else {
       document.getElementById("admin-panel").classList.add("hidden");
   }
 
+  // Redisplay the cards for the currently selected menu group, or all if none
   if (currentMenu) {
     filterCardsByGroup(currentMenu);
   } else {
@@ -1151,17 +1210,25 @@ function filterCardsByGroup(menuGroup) {
   document.getElementById("main-content").classList.remove("hidden");
   document.getElementById("dashboard-content").classList.add("hidden");
   document.getElementById("admin-panel").classList.add("hidden");
+  document.getElementById("back-btn").classList.add("hidden"); // Cards view is the default, no back button needed.
 }
 
-function loadPortal(roles) {
+async function loadPortal(roles) {
   document.getElementById("login-section").classList.add("hidden");
   document.getElementById("app").classList.remove("hidden");
   document.getElementById("role-title").innerText = `Welcome to Sparkl-MIS, ${user.id}`;
   document.getElementById("profile-initial").innerText = user.id.charAt(0).toUpperCase();
 
+  // Clear previous role selection if any
+  const roleTitleDiv = document.getElementById("role-title");
+  let existingRoleWrapper = roleTitleDiv.querySelector('.role-selection-wrapper');
+  if (existingRoleWrapper) {
+      existingRoleWrapper.remove();
+  }
+
   if (user.roles.length > 1) {
     const roleWrapper = document.createElement("div");
-    roleWrapper.style.marginTop = "8px";
+    roleWrapper.className = "role-selection-wrapper"; // Add a class for easier targeting
     user.roles.forEach(role => {
       const radioInput = document.createElement("input");
       radioInput.type = "radio";
@@ -1187,7 +1254,7 @@ function loadPortal(roles) {
       roleWrapper.appendChild(radioInput);
       roleWrapper.appendChild(label);
     });
-    document.getElementById("role-title").appendChild(roleWrapper);
+    roleTitleDiv.appendChild(roleWrapper);
   }
 
   const defaultRole = user.roles.includes("Admin") ? "Admin" : user.roles[0];
@@ -1205,18 +1272,22 @@ async function loadPublicMenu(userId, userRoles) {
   const grouped = {};
   const isAllAccess = userId.toLowerCase() === "all";
 
+  // Filter out the header row (index 0) from the data array.
+  // The first data row starts from index 1 in the raw data from sheet.
+  const actualData = data.slice(1); // Assuming first row is header
+
   if (isAllAccess || userRoles.map(u => u.toLowerCase()).includes('admin') || userRoles.map(u => u.toLowerCase()).includes('public')) {
       if (!grouped['Main']) grouped['Main'] = [];
       grouped['Main'].unshift({ submenu: 'Dashboard', link: 'internal:dashboard', icon: 'dashboard', menu: 'Main' });
   }
 
-  data.forEach(([role, menu, submenu, link, icon]) => {
+  actualData.forEach(([role, menu, submenu, link, icon]) => {
     const roleList = String(role).split(",").map(r => r.trim().toLowerCase());
     const match = isAllAccess ? roleList.includes("all") : roleList.some(r => userRoles.map(u => u.toLowerCase()).includes(r));
 
     if (match) {
       if (!grouped[menu]) grouped[menu] = [];
-      if (link !== 'internal:dashboard') {
+      if (link !== 'internal:dashboard') { // Dashboard handled separately
         grouped[menu].push({ submenu, link, icon, menu });
       }
     }
@@ -1268,6 +1339,7 @@ async function loadPublicMenu(userId, userRoles) {
       cards.forEach(card => {
         card.style.display = (card.dataset.menu === menu && !isCurrentlyVisible) ? "flex" : "none";
       });
+      document.getElementById("back-btn").classList.add("hidden"); // When clicking sidebar group, go to cards, hide back button
     };
     
     sectionItems.classList.add('section-items');
@@ -1286,7 +1358,7 @@ async function loadPublicMenu(userId, userRoles) {
           card.className = "card";
           card.dataset.menu = item.menu;
           card.onclick = () => openItem(item.link, item.menu, item.submenu);
-          card.style.display = "none";
+          card.style.display = "none"; /* Initially hidden, displayed on group click */
           card.innerHTML = `
           <div class="card-icon">
               <i class="material-icons">${item.icon}</i>
@@ -1302,11 +1374,14 @@ async function loadPublicMenu(userId, userRoles) {
     sidebar.appendChild(sectionWrapper);
   }
   
-  const firstMenu = Object.keys(grouped)[0];
-  if (firstMenu) {
-      document.querySelector(`.sidebar .section-label`).click();
-      if (grouped[firstMenu][0].link === 'internal:dashboard') {
-          openItem('internal:dashboard', grouped[firstMenu][0].menu, grouped[firstMenu][0].submenu);
+  // After loading menus, simulate click on the first section to display its cards/dashboard
+  const firstMenuLabel = document.querySelector(`.sidebar .section-label`);
+  if (firstMenuLabel) {
+      firstMenuLabel.click(); // This will expand the first section and show its cards
+      // If the first item in the first group is Dashboard, open it
+      const firstGroup = Object.keys(grouped)[0];
+      if (firstGroup && grouped[firstGroup][0] && grouped[firstGroup][0].link === 'internal:dashboard') {
+          openItem('internal:dashboard', grouped[firstGroup][0].menu, grouped[firstGroup][0].submenu);
       }
   }
 }
@@ -1317,12 +1392,18 @@ async function loadAdminMenu() {
   // ⚠️ In a production app, the backend should verify 'Admin' role here too.
   const data = await getMenuData(); // Get all menu data
 
-  data.forEach((row, index) => {
-    // Row is [role, menu, submenu, link, icon]
+  // Filter out the header row (index 0) and iterate through actual data rows
+  data.slice(1).forEach((row, arrayIndex) => {
+    // arrayIndex here is the 0-based index of the *data row* within the filtered array (data.slice(1))
+    // We need to pass the original 0-based index from the full data array to deleteEntry
+    // The original index would be arrayIndex + 1 because we sliced off the header.
+    // So if the row is at index 0 in slice(1), it was at index 1 in the full `data` array.
+    const originalDataIndex = arrayIndex + 1; 
+
     const li = document.createElement("li");
     li.innerHTML = `
       <span>${row[0]} - ${row[1]} / ${row[2]} (${row[4]})</span>
-      <button class="delete-btn" onclick="deleteEntry(${index})">Delete</button>
+      <button class="delete-btn" onclick="deleteEntry(${originalDataIndex})">Delete</button>
     `;
     adminMenuList.appendChild(li);
   });
